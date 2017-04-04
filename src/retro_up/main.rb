@@ -133,6 +133,27 @@ module TT::Plugins::RetroUp
   end
 
 
+  class RetroSelectionObserver < Sketchup::SelectionObserver
+
+    SELECTION_CHANGE_AUDIO = File.join(__dir__, 'audio', 'SelectionTool.wav')
+
+    def onSelectionBulkChange(selection)
+      onSelectionChange(selection)
+    end
+
+    def onSelectionCleared(selection)
+      onSelectionChange(selection)
+    end
+
+    private
+
+    def onSelectionChange(selection)
+      UI.play_sound(SELECTION_CHANGE_AUDIO)
+    end
+
+  end
+
+
   class RetroAppObserver < Sketchup::AppObserver
 
     def expectsStartupModelNotifications
@@ -154,6 +175,7 @@ module TT::Plugins::RetroUp
     private
 
     def observe_model(model)
+      model.selection.add_observer(RetroSelectionObserver.new)
       model.tools.add_observer(RetroToolsObserver.new)
       APP.activate_retro_style if APP.retro_style_mode?
     end
