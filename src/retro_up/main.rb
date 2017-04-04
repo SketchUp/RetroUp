@@ -2,12 +2,17 @@ require 'sketchup.rb'
 
 module TT::Plugins::RetroUp
 
+  APP = self
+
   unless file_loaded?(__FILE__)
     menu = UI.menu('Plugins')
     retro_menu = menu.add_submenu('Retro Mode')
 
     id = retro_menu.add_item('Activate') { self.toggle_retro_mode }
     retro_menu.set_validation_proc(id)  { self.validation_proc_retro_mode }
+
+    id = retro_menu.add_item('Retro Style') { self.toggle_retro_style_mode }
+    retro_menu.set_validation_proc(id)  { self.validation_proc_retro_style_mode }
 
     id = retro_menu.add_item('Debug') { self.toggle_debug_mode }
     retro_menu.set_validation_proc(id)  { self.validation_proc_debug_mode }
@@ -22,18 +27,40 @@ module TT::Plugins::RetroUp
 
   def self.retro_mode=(value)
     Sketchup.write_default('TT_RetroUp', 'RetroMode', value)
-    @retro_model = value
+    @retro_mode = value
   end
 
   def self.retro_mode?
     if @retro_mode.nil?
-      @retro_model = Sketchup.read_default('TT_RetroUp', 'RetroMode', true)
+      @retro_mode = Sketchup.read_default('TT_RetroUp', 'RetroMode', true)
     end
-    @retro_model
+    @retro_mode
   end
 
   def self.validation_proc_retro_mode
     self.retro_mode? ? MF_CHECKED : MF_ENABLED
+  end
+
+
+  def self.toggle_retro_style_mode
+    self.retro_style_mode = !self.retro_style_mode?
+  end
+
+  def self.retro_style_mode=(value)
+    Sketchup.write_default('TT_RetroUp', 'RetroMode', value)
+    @retro_style_mode = value
+    self.activate_retro_style if @retro_style_mode
+  end
+
+  def self.retro_style_mode?
+    if @retro_style_mode.nil?
+      @retro_style_mode = Sketchup.read_default('TT_RetroUp', 'RetroMode', true)
+    end
+    @retro_style_mode
+  end
+
+  def self.validation_proc_retro_style_mode
+    self.retro_style_mode? ? MF_CHECKED : MF_ENABLED
   end
 
 
@@ -55,6 +82,22 @@ module TT::Plugins::RetroUp
 
   def self.validation_proc_debug_mode
     self.debug_mode? ? MF_CHECKED : MF_ENABLED
+  end
+
+
+  RETRO_STYLE_FILE = File.join(__dir__, 'styles', 'RetroUp.style').freeze
+  RETRO_STYLE_NAME = 'RetroUp'.freeze
+
+  def self.activate_retro_style
+    styles = Sketchup.active_model.styles
+    style = styles[RETRO_STYLE_NAME]
+    if style.nil?
+      styles.add_style(RETRO_STYLE_FILE, true)
+      style = styles[RETRO_STYLE_NAME]
+    else
+      styles.selected_style = style
+    end
+    style
   end
 
 
@@ -112,6 +155,7 @@ module TT::Plugins::RetroUp
 
     def observe_model(model)
       model.tools.add_observer(RetroToolsObserver.new)
+      APP.activate_retro_style if APP.retro_style_mode?
     end
 
   end
