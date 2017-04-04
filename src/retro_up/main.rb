@@ -8,16 +8,28 @@ module TT::Plugins::RetroUp
     menu = UI.menu('Plugins')
     retro_menu = menu.add_submenu('Retro Mode')
 
-    id = retro_menu.add_item('Activate') { self.toggle_retro_mode }
+    id = retro_menu.add_item('Activate All') { self.activate_all }
+
+    retro_menu.add_separator
+
+    id = retro_menu.add_item('Retro Mode') { self.toggle_retro_mode }
     retro_menu.set_validation_proc(id)  { self.validation_proc_retro_mode }
 
     id = retro_menu.add_item('Retro Style') { self.toggle_retro_style_mode }
     retro_menu.set_validation_proc(id)  { self.validation_proc_retro_style_mode }
 
+    retro_menu.add_separator
+
     id = retro_menu.add_item('Debug') { self.toggle_debug_mode }
     retro_menu.set_validation_proc(id)  { self.validation_proc_debug_mode }
 
     file_loaded(__FILE__)
+  end
+
+
+  def self.activate_all
+    self.retro_mode = true
+    self.retro_style_mode = true
   end
 
 
