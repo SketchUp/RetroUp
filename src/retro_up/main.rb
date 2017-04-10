@@ -209,6 +209,9 @@ module TT::Plugins::RetroUp
 
   end
 
-  Sketchup.add_observer(RetroAppObserver.new)
+  unless file_loaded?('RetroAppObserver')
+    Sketchup.add_observer(RetroAppObserver.new)
+    file_loaded('RetroAppObserver')
+  end
 
 end # module
