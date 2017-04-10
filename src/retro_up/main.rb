@@ -168,6 +168,7 @@ module TT::Plugins::RetroUp
     private
 
     def onSelectionChange(selection)
+      return unless TT::Plugins::RetroUp.retro_mode?
       UI.play_sound(SELECTION_CHANGE_AUDIO)
     end
 
