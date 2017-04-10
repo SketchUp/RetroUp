@@ -69,7 +69,11 @@ module TT::Plugins::RetroUp
   def self.retro_style_mode=(value)
     Sketchup.write_default('TT_RetroUp', 'RetroMode', value)
     @retro_style_mode = value
-    self.activate_retro_style if @retro_style_mode
+    if @retro_style_mode
+      self.activate_retro_style
+    else
+      self.restore_style
+    end
   end
 
   def self.retro_style_mode?
@@ -111,6 +115,9 @@ module TT::Plugins::RetroUp
   def self.activate_retro_style
     model = Sketchup.active_model
     styles = model.styles
+    unless styles.selected_style.name.include?(RETRO_STYLE_NAME)
+      @last_style = styles.selected_style.name
+    end
     style = styles[RETRO_STYLE_NAME]
     if style.nil?
       styles.add_style(RETRO_STYLE_FILE, true)
@@ -124,6 +131,19 @@ module TT::Plugins::RetroUp
       styles.selected_style = style
     end
     style
+  end
+
+  def self.restore_style
+    model = Sketchup.active_model
+    styles = model.styles
+    last_style = model.styles[@last_style.to_s] || model.styles.find { |style|
+      !style.name.include?(RETRO_STYLE_NAME)
+    }
+    p @last_style
+    puts last_style.name
+    styles.selected_style = last_style
+    # Restore HorizonColor. This makes SU calculate dynamically the color.
+    model.rendering_options['HorizonColor'] = [0, 0, 0, 0]
   end
 
 
