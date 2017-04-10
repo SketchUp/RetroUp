@@ -14,10 +14,10 @@ module TT::Plugins::RetroUp
 
     retro_menu.add_separator
 
-    id = retro_menu.add_item('Retro Mode') { self.toggle_retro_mode }
+    id = retro_menu.add_item('Audio') { self.toggle_retro_mode }
     retro_menu.set_validation_proc(id)  { self.validation_proc_retro_mode }
 
-    id = retro_menu.add_item('Retro Style') { self.toggle_retro_style_mode }
+    id = retro_menu.add_item('Style') { self.toggle_retro_style_mode }
     retro_menu.set_validation_proc(id)  { self.validation_proc_retro_style_mode }
 
     retro_menu.add_separator
