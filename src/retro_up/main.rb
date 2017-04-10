@@ -109,11 +109,17 @@ module TT::Plugins::RetroUp
   RETRO_STYLE_NAME = 'RetroUp'.freeze
 
   def self.activate_retro_style
-    styles = Sketchup.active_model.styles
+    model = Sketchup.active_model
+    styles = model.styles
     style = styles[RETRO_STYLE_NAME]
     if style.nil?
       styles.add_style(RETRO_STYLE_FILE, true)
       style = styles[RETRO_STYLE_NAME]
+      # HACK: The HorizonColor doesn't appear to be stored with the file.
+      # We manually apply it to give a different horizon tint other than the
+      # default white-ish one which clash with the dark style.
+      model.rendering_options['HorizonColor'] = [64, 0, 0]
+      styles.update_selected_style
     else
       styles.selected_style = style
     end
