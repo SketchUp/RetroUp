@@ -10,6 +10,8 @@ module TT::Plugins::RetroUp
 
     id = retro_menu.add_item('Activate All') { self.activate_all }
 
+    id = retro_menu.add_item('Deactivate All') { self.deactivate_all }
+
     retro_menu.add_separator
 
     id = retro_menu.add_item('Retro Mode') { self.toggle_retro_mode }
@@ -30,6 +32,12 @@ module TT::Plugins::RetroUp
   def self.activate_all
     self.retro_mode = true
     self.retro_style_mode = true
+  end
+
+
+  def self.deactivate_all
+    self.retro_mode = false
+    self.retro_style_mode = false
   end
 
 
