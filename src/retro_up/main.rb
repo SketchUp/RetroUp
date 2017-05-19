@@ -15,17 +15,26 @@ module TT::Plugins::RetroUp
     retro_menu.add_separator
 
     id = retro_menu.add_item('Audio') { self.toggle_retro_mode }
-    retro_menu.set_validation_proc(id)  { self.validation_proc_retro_mode }
+    retro_menu.set_validation_proc(id) { self.validation_proc_retro_mode }
 
     id = retro_menu.add_item('Style') { self.toggle_retro_style_mode }
-    retro_menu.set_validation_proc(id)  { self.validation_proc_retro_style_mode }
+    retro_menu.set_validation_proc(id) { self.validation_proc_retro_style_mode }
+
+    retro_menu.add_separator
+
+    id = retro_menu.add_item('Force New Model') { self.new_model_discard_changes }
 
     retro_menu.add_separator
 
     id = retro_menu.add_item('Debug') { self.toggle_debug_mode }
-    retro_menu.set_validation_proc(id)  { self.validation_proc_debug_mode }
+    retro_menu.set_validation_proc(id) { self.validation_proc_debug_mode }
 
     file_loaded(__FILE__)
+  end
+
+
+  def self.new_model_discard_changes
+    Sketchup.active_model.close(true)
   end
 
 
